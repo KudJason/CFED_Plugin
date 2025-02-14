@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  cfed_dev:
+    build: .
+    container_name: cfed_dev_container
+    volumes:
+      - .:/home/developer/workspace  # 挂载当前目录
+    ports:
+      - "2222:22"  # 如果你需要 SSH 访问
+    stdin_open: true
+    tty: true
+    privileged: true

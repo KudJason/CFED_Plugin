@@ -1,0 +1,16 @@
+{
+  "name": "CFED_Plugin Dev Container",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "cfed_dev",
+  "workspaceFolder": "/home/developer/workspace",
+  "settings": {
+      "terminal.integrated.defaultProfile.linux": "bash"
+  },
+  "extensions": [
+      "ms-vscode.cpptools",
+      "ms-python.python",
+      "eamodio.gitlens"
+  ],
+  "remoteUser": "developer",
+  "postCreateCommand": "echo 'Welcome to the CFED Dev Container!'"
+}
