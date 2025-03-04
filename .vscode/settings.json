@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "snipmath.h": "c",
+        "stdio.h": "c"
+    },
+    "jupyter.defaultKernel": "cfed_env",
+    "jupyter.alwaysTrustNotebooks": true
+}

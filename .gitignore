@@ -1,0 +1,15 @@
+ # data folder
+data/
+
+# env file
+.env
+
+# src folder
+src/
+
+# notebooks folder
+notebooks/
+
+# dev docs folder
+dev-docs/
+thesis/

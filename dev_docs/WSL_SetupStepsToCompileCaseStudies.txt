@@ -1,0 +1,124 @@
+1) Open powershell as administrator (>)
+
+2) install wsl
+	> wsl --install
+
+3) view available wsl distribution
+	> wsl --list --online
+
+4a) If Ubuntu-20.04 is part of that list (and it has not been installed before), install Ubuntu-20.04 and configure the distribution
+	1. install
+		> wsl --install -d Ubuntu-20.04
+	2. launch
+		> wsl -d Ubuntu-20.04
+	3. Follow the prompts to setup the user, etc. and configure the distribution
+
+4b) If Ubuntu-20.04 is not part of that list or has been installed before and, import and configure a fresh Ubuntu-20.04 image
+	1. Download the Ubuntu-20.04 WSL image at https://cloud-images.ubuntu.com/releases/focal/release-20240710/ubuntu-20.04-server-cloudimg-amd64-wsl.rootfs.tar.gz
+	2. Decide where you want to store the WSL distribution, and create a folder. E.g. C:\Users\jensv\Documents\Ubuntu20.04_WSL
+	3. import the downloaded image into WSL
+		> wsl --import Unbuntu20.04_MasterThesis C:\Users\jensv\Documents\Ubuntu20.04_WSL C:\Path\To\Downloaded\ubuntu-20.04-server-cloudimg-amd64-wsl.rootfs.tar.gz
+			* "Unbuntu20.04_MasterThesis" is the name of the instance. replace with a unique name to easily recognize this
+	4. launch
+		> wsl -d Unbuntu20.04_MasterThesis
+	5. This has started you as the root user, best to add a new user, provide it sudo rights and make it the default one. In the Ubuntu terminal ($)
+		$ adduser username
+			* replace 'username' with the actual user name
+			* follow the prompts
+		$ nano /etc/wsl.conf
+			* in this file, add:
+				[user]
+				default=username
+			* save and exit (CTRL+X, then Y, then Enter)
+		$ sudo usermod -a -G sudo <username>
+	6. Exit and restart the Distribution
+		$ exit
+		> wsl --terminate Unbuntu20.04_MasterThesis
+		> wsl -d Unbuntu20.04_MasterThesis
+
+5) As good practice, update the distro
+	$ sudo apt update && sudo apt upgrade -y
+
+6) For ease of use, install windows terminal and add a profile for this WSL instance as explained here: https://learn.microsoft.com/en-us/windows/terminal/install ; for future use, launch the Unbuntu20.04_MasterThesis instancd through windows terminal
+
+7) install some basic packages/tools
+	$ sudo apt install git gcc g++ make -y
+
+8) setup ssh keys to your gitlab.kuleuven.be account (full details: https://docs.gitlab.com/user/ssh/)
+	1. create keys
+		$ ssh-keygen -t ed25519 -C "Unbuntu20.04_MasterThesis"
+			* when asked for a passphrase, best leave this empty
+	2. open the public key and copy its content
+	3. Login to gitlab.kuleuven.be
+	4. Click on your profile picture, select Edit profile, then select SSH Keys
+	5. Add the just created key (without expiration data)
+	6. Test the ssh connection
+		$ ssh -T git@gitlab.kuleuven.be
+			(select 'yes' when asked to continue)
+
+9) Install some additional packages, necessary to build GCC plugins
+	$ sudo apt install gcc-multilib g++-multilib libgmp3-dev linux-libc-dev -y
+
+10) clone the necessary repositories from gitlab
+	0. make sure you are in your home directory!
+		$ cd ~
+	1. get the arm-gcc toolchain, necessary to compile the case studies
+		$ git clone git@gitlab.kuleuven.be:m-group-campus-brugge/distrinet/bitflip_research/toolchains.git
+	2. get the CFED GCC plugin source code
+		$ git clone git@gitlab.kuleuven.be:m-group-campus-brugge/distrinet/bitflip_research/cfed_plugin.git
+	3. get the case study source code
+		$ git clone git@gitlab.kuleuven.be:m-group-campus-brugge/distrinet/bitflip_research/academiccasestudies.git
+
+11) Build the GCC plugin
+	0. cd ~/cfed_plugin
+	1. switch to the test_attributes branch
+		$ git switch test_attributes
+	2. perform a small change to the makefile
+		$ nano makefile
+		* change "CXX = g++-7" to "CXX = g++"
+		* exit and save (CTRL+X, then Y, then Enter)
+	3. build the GCC plugin
+		$ make
+
+12) Add necessary environment variables into the bashrc script
+	0. move back to your home directory
+		$cd ~
+	1. $ nano .bashrc
+	2. At the end of the script, add the following
+		# Plugin and toolchain exports
+		export ARMGCC_DIR=/workspace/src/toolchains/ARM/r5-r6
+		export ARMGCC7=/workspace/src/toolchaisn/ARM/r5-r6
+		export CFED_PLUGIN_PATH=/workspace/src/cfed_plugin
+			* replace <username> with the actual user name
+	3. save and exit (CTRL+X, then Y, then Enter)
+	4. either source the bashrc script, or open a new instance of the WSL and close the current one
+	5. verify the new environment variables are now available
+		$ echo $ARMGCC_DIR
+/workspace/src/toolchains
+13) Build unprotected case study
+	0. move into the case study folder
+		$ cd ~/academiccasestudies
+	1. switch to the Sijie_compile branch
+		$ git switch Sijie_compile
+	2. Use the Sijie compile script to compile the desired case study
+		$ ./BuildSijie.sh <caseStudy> <dataSet>
+			* caseStudy: BC | BS | CRC | CU | DIJ | FFT | MM | QS
+			* dataSet: 0 | 1 | 2 | 3 | 4
+
+	This will create a BUILD folder in the requested case study folder, containing build artifacts including a .disasm file
+
+14) Build protected case study
+	0. move into the case study folder and make sure you are still on the Sijie_compile branch
+		$ cd ~/academiccasestudies
+		$ git switch Sijie_compile
+	1. Adjust plugin_config.mak to the desired technique and technique type
+		$ nano plugin_config.mak
+		-> after making changens don't forget to save and exit (CTRL+X, then Y, then Enter)
+	2. Use the Sijie compile script to compile the desired case study
+		$ ./BuildSijie.sh <caseStudy> <dataSet> CFED=1
+			* caseStudy: BC | BS | CRC | CU | DIJ | FFT | MM | QS
+			* dataSet: 0 | 1 | 2 | 3 | 4
+			* CFED=1 enables the plugin. Should be visible by giving green and cyan outputs in the terminal.
+				Red outputs if errors have occurred concerning the plugin.
+
+	This will create a BUILD folder in the requested case study folder, containing build artifacts including a .disasm file and the GCC_Plugin_Output folder, containing the RTL files and other known output.
