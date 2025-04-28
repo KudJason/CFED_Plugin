@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  cfed-dev:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+      args:
+        BUILDKIT_INLINE_CACHE: 1
+    volumes:
+      - ..:/workspace:cached
+      - ~/.gitconfig:/home/developer/.gitconfig:ro
+      - venv-data:/opt/venv/
+    command: sleep infinity
+    shm_size: '2gb'
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+      - DISPLAY=${DISPLAY}
+    env_file:
+      - ../data/.db_env
+    init: true
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+    networks:
+      - cfed-network
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:4.4
+    container_name: cfed-mongodb
+    restart: unless-stopped
+    env_file:
+      - ../data/.db_env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
+    volumes:
+      - mongodb-data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - cfed-network
+    command: mongod --bind_ip_all
+
+volumes:
+  venv-data:
+  mongodb-data:
+    name: cfed-mongodb-data
+
+networks:
+  cfed-network:
+    name: cfed-network 
+    external: true 

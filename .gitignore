@@ -4,8 +4,8 @@ data/
 # env file
 .env
 
-# src folder
-src/
+# cfed_basic folder
+cfed_basic/
 
 # notebooks folder
 notebooks/
@@ -13,3 +13,16 @@ notebooks/
 # dev docs folder
 dev-docs/
 thesis/
+
+# python env folder
+.venv/
+
+# vscode env folder
+.vscode/
+
+# build folder
+/src/algorithm_compiler/BUILD/
+/src/algorithm_compiler/cfed_builds.db
+
+# pycache folder
+/src/algorithm_compiler/__pycache__/

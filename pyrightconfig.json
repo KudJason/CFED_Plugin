@@ -1,0 +1,15 @@
+{
+  "include": ["src"],
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.*",
+    "**/*.pyc",
+    ".git",
+    "build",
+    "dist"
+  ],
+  "pythonVersion": "3.10",
+  "venvPath": "/opt/venv",
+  "venv": "cfed"
+}

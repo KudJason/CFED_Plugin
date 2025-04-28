@@ -1,0 +1,5 @@
+TECHNIQUE = "RACFED"
+TECH_TYPE = SigMon
+SEL_LEVEL = 0
+
+

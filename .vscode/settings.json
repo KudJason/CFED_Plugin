@@ -1,8 +1,19 @@
 {
-    "files.associations": {
-        "snipmath.h": "c",
-        "stdio.h": "c"
+    "jupyter.pythonPath": "/opt/venv/cfed/bin/python",
+    "python.defaultInterpreterPath": "/opt/venv/cfed/bin/python",
+    "terminal.integrated.profiles.linux": {
+        "bash": {
+            "path": "bash",
+            "args": [
+                "-c",
+                "source /opt/venv/cfed/bin/activate && $SHELL"
+            ]
+        }
     },
-    "jupyter.defaultKernel": "cfed_env",
-    "jupyter.alwaysTrustNotebooks": true
+    "python.analysis.extraPaths": ["/workspace/src"],   
+    "python.linting.enabled": true,   
+    "python.formatting.provider": "black",   
+    "python.analysis.diagnosticMode": "workspace",
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.shell.linux": "bash"
 }

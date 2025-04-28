@@ -1,0 +1,56 @@
+{
+    "name": "CFED Development Environment",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "cfed-dev",
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+                "ms-vscode.cmake-tools",
+                "eamodio.gitlens",
+                "ms-vscode.cpp-extension-pack",
+                "ms-python.python",
+                "ms-toolsai.jupyter",
+                "ms-python.vscode-pylance"
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "/bin/bash"
+                    }
+                },
+                "python.defaultInterpreterPath": "/opt/venv/cfed/bin/python",
+                "python.analysis.extraPaths": [
+                    "/workspace"
+                ],
+                "python.terminal.activateEnvironment": true,
+                "files.watcherExclude": {
+                    "**/target": true,
+                    "**/build": true,
+                    "**/.git/objects/**": true,
+                    "**/.git/subtree-cache/**": true,
+                    "**/node_modules/**": true,
+                    "**/.venv/**": true,
+                    "**/venv/**": true,
+                    "**/__pycache__/**": true
+                },
+                "files.exclude": {
+                    "**/.git": true,
+                    "**/.svn": true,
+                    "**/.hg": true,
+                    "**/CVS": true,
+                    "**/.DS_Store": true,
+                    "**/Thumbs.db": true,
+                    "**/*.pyc": true,
+                    "**/__pycache__": true
+                }
+            }
+        }
+    },
+    "remoteUser": "developer",
+    "shutdownAction": "stopCompose",
+    "forwardPorts": [27017],
+    "postStartCommand": "sudo chown -R developer:developer /workspace && echo '提示: 在VSCode中，使用命令面板(Ctrl+Shift+P)选择\"Python: Select Interpreter\"，然后点击\"Enter interpreter path\"，输入\"/opt/venv/cfed/bin/python\"' > /workspace/PYTHON_ENV_README.txt"
+}
